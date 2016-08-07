@@ -18,6 +18,7 @@ Search Architecture:
 '''
 
 import os
+import sys
 import logging
 import time
 import math
@@ -270,10 +271,14 @@ def check_login(args, account, api, position):
                 time.sleep(args.login_delay)
 
     lib_path = ""
-    if os.name is "nt":
+    if sys.platform == "win32":
         lib_path = os.path.join(os.path.dirname(__file__), "encrypt.dll")
-    elif os.name is "posix":
+    elif sys.platform == "darwin":
+        lib_path = os.path.join(os.path.dirname(__file__), "libencrypt-osx.so")
+    elif sys.platform.startswith('linux'):
         lib_path = os.path.join(os.path.dirname(__file__), "libencrypt.so")
+    else:
+        raise Exception("Unexpected/unsupported platform '{}'".format(sys.platform))
 
     api.activate_signature(lib_path)
 
